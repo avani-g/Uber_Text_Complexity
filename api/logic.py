@@ -34,10 +34,20 @@ class bcolors:
 @app.route('/getScores/<text>', methods=['GET'])
 def getScores(text):
 
+    #CUSTOMIZATIONS:
+    max_sentence_length = 23
+    max_long_words_per_sentence = 2
+    max_difficult_words_per_sentence = 0
+    max_nouns_per_sentence = 3
+
+    all_values = {}
+
+    punctuation_list = [",", ".", "-", "'", "\"", ":", ";", "—", "!", "?"]
     returnText = ""
     returnText = returnText + "<b>"+"Text under analysis:"+"</b>" + "<br>" + text
     print(f"{bcolors.HEADER}Text:{bcolors.ENDC}", text)
-
+    if text[-1] not in punctuation_list:
+        text += "."
     readability_scores = Textatistic(text).scores
     returnText = returnText + "<br><br><b>Scores: </b>" + str(readability_scores)
     print("\nScores:", readability_scores)
@@ -48,8 +58,14 @@ def getScores(text):
     print("Word Count:", Textatistic(text).word_count)
     print("Character Count:", Textatistic(text).char_count)
     print("Syllable Count:", Textatistic(text).sybl_count)
+
+    all_values["Sentence Count"] = Textatistic(text).sent_count
+    all_values["Word Count"] = Textatistic(text).word_count
+    all_values["Character Count"] = Textatistic(text).char_count
+    all_values["Syllable Count"] = Textatistic(text).sybl_count
+
 	
-    returnText = returnText + "<br><b>Basic Info: </b><br><b>Word Count:</b>" + str(Textatistic(text).word_count)+"<br><b>Character Count: </b>"+str(Textatistic(text).char_count)+"<br><b>Syllable Count: </b>"+str(Textatistic(text).sybl_count)
+    returnText = returnText + "<br><b>Basic Info: </b><br><b><Sentence Count:</b>" + str(Textatistic(text).sent_count) + "<br><b>Word Count:</b>" + str(Textatistic(text).word_count)+"<br><b>Character Count: </b>"+str(Textatistic(text).char_count)+"<br><b>Syllable Count: </b>"+str(Textatistic(text).sybl_count)
 	
 
     # Complicated Info -------------------------------------------------
@@ -62,6 +78,17 @@ def getScores(text):
     print("Poly Syllable World Count:", Textatistic(text).polysyblword_count) # polysyblword_count	number of words with three or more syllables.
 
     returnText = returnText + "<br><br><b>Complicated Info: </b><br><b>Not Dale-Chall Count:</b>" + str(Textatistic(text).notdalechall_count)+"<br><b>Poly Syllable World Count: </b>"+str(Textatistic(text).polysyblword_count)
+
+    no_pn_text = ""
+    for (wrd, tg) in nltk.pos_tag(nltk.word_tokenize(text)):
+        if tg != "NNP" and tg != "NNPS":
+            no_pn_text += wrd + " "
+    print("NO PN TEXT: ", no_pn_text)
+    print(nltk.pos_tag(nltk.word_tokenize(text)))
+    all_values["Difficult Words"] = Textatistic(no_pn_text).notdalechall_count
+    all_values["Long Words"] = Textatistic(no_pn_text).polysyblword_count
+    all_values["Difficult Words Percentage"] = all_values["Difficult Words"] / all_values['Word Count']
+    all_values["Long Words Percentage"] = all_values["Long Words"] / all_values['Word Count']
 
 
     # Scores ------------------------------------------------------------
@@ -91,6 +118,7 @@ def getScores(text):
         # if PDW > 5% -> Adjusted Score = Raw Score + 3.6365, otherwise Adjusted Score = Raw Score (for 4th grade and above)
     returnText = returnText + "<br><b>Dale-Chall Score: </b>"+str(Textatistic(text).dalechall_score) + " ( " + dc_grade + " )"
 
+    all_values["Dale-Chall Score"] = [Textatistic(text).dalechall_score, dc_grade]
 
     # NOT USING THIS METHOD BECUASE ITS SIILAR TO THE FLESCH ONE AND DOESN'T HAVE A GOOD SCORING SYSTEM
 
@@ -124,6 +152,8 @@ def getScores(text):
         # sample of 30 sentences.
     returnText = returnText + "<br><b>SMOG Score:</b> " + str(Textatistic(text).smog_score) + " ( Grade " +  str(int(Textatistic(text).smog_score)) + " ) "
 
+    all_values["SMOG Score"] = [Textatistic(text).smog_score, "Grade " + str(int(Textatistic(text).smog_score))]
+
     if Textatistic(text).flesch_score < 30:
         fs_grade = "College Graduate"
     elif Textatistic(text).flesch_score < 50:
@@ -139,7 +169,7 @@ def getScores(text):
     elif Textatistic(text).flesch_score <= 100:
         fs_grade = "5th"
     else:
-        fs_grade = "Over 100?? Super Readable I guess"
+        fs_grade = "4th Grade and Below"
     print("Flesch Score:", Textatistic(text).flesch_score, "(", fs_grade, ")")
         # *uses average sentence length and syllables per word*
         # Reading Ease score = 206.835 - (1.015 × ASL) - (84.6 × ASW)
@@ -148,11 +178,15 @@ def getScores(text):
         # ASW = average word length in syllables (number of syllables divided by number of words)
     returnText = returnText + "<br><b>Flesch Score:</b> " + str(Textatistic(text).flesch_score) + " ( " + fs_grade + " ) "
 
+    all_values["Flesch Score"] = [Textatistic(text).flesch_score, fs_grade]
+
     print("Gunning fog Score:", Textatistic(text).gunningfog_score, "(", "Grade", int(Textatistic(text).gunningfog_score), ")")
         # *uses average sentence length and percentage of words with more than 2 syllables*
         # Grade level= 0.4 * ( (average sentence length) + (percentage of Hard Words) )
         # Here, Hard Words = words with more than two syllables.
     returnText = returnText + "<br><b>Gunning fog Score:</b> " + str(Textatistic(text).gunningfog_score) + " ( Grade " + str(int(Textatistic(text).gunningfog_score)) + " ) "
+
+    all_values["Gunning Fog Score"] = [Textatistic(text).gunningfog_score, "Grade " + str(int(Textatistic(text).gunningfog_score))]
 
     print("\n\n")
     returnText = returnText + "<br><br>"
@@ -165,10 +199,13 @@ def getScores(text):
     print(f"{bcolors.OKBLUE}Tips:{bcolors.ENDC}")
     returnText = returnText + "<b>Tips:</b>"
 
-    punctuation_list = [",", ".", "-", "'", "\"", ":", ";", "—", "!", "?"]
+    all_tips = {}
 
     returnTextTips = ""
     for sentence in sentences:
+
+        all_tips[sentence] = []
+
         words_per_sentence.append([Textatistic(sentence).word_count, sentence])
 
         # tagged_sent = nltk.pos_tag(nltk.word_tokenize(sentence.translate(str.maketrans('', '', string.punctuation))))
@@ -182,14 +219,20 @@ def getScores(text):
                     #print(word, tag)
                 if tag == 'NN' or tag == 'NNS':
                     nouns.append(word)
-
-        if len(nouns) > 5:
+            else:
+                nouns.append(word)
+        #print("TAGGED:", tagged_sent)
+        if len(nouns) > max_nouns_per_sentence:
             print(f"{bcolors.FAIL}Too many nouns {bcolors.ENDC}" + "(" + str(len(nouns)) + "):", sentence, "\n")
             returnTextTips = returnTextTips + "<br>Too many nouns (" + str(len(nouns)) + "): " + sentence
             print(f"{bcolors.BOLD}nouns:{bcolors.ENDC}", nouns, "\n")
+            temp_noun_warning = "This sentence has " + str(len(nouns)) + " nouns. Try to have " + str(max_nouns_per_sentence) + " or less nouns per sentence. <br>These are the nouns in this sentence:"
+            for noun in nouns:
+                temp_noun_warning += "<br>" + noun
+            all_tips[sentence].append(temp_noun_warning)
 
 
-        if Textatistic(tagged_sent_no_pn + ".").notdalechall_count > 2: # CHANGE NUMBER LATER
+        if Textatistic(tagged_sent_no_pn + ".").notdalechall_count > max_difficult_words_per_sentence:
             print(f"{bcolors.FAIL}Too many difficult words {bcolors.ENDC}" + "(" + str(Textatistic(tagged_sent_no_pn + ".").notdalechall_count) + "):", sentence)
             returnTextTips = returnTextTips + "<br>Too many difficult words (" + str(Textatistic(tagged_sent_no_pn + ".").notdalechall_count) + "): " + sentence
 			
@@ -197,40 +240,50 @@ def getScores(text):
             returnTextTips = returnTextTips + "<br><font color=red>No proper nouns: </font>" + tagged_sent_no_pn
             print(f"{bcolors.OKGREEN}Consider changing: {bcolors.ENDC}")
             returnTextTips = returnTextTips + "<br><font color=green>Consider changing: </font>"
+            temp_dalechall_warning = "This sentence has " + str(Textatistic(tagged_sent_no_pn + ".").notdalechall_count) + " difficult words (words that aren't on the Dale-Chall list). Try to have " + str(max_difficult_words_per_sentence) + " or less difficult words per sentence. These are the difficult words in this sentence:"
             for w in nltk.word_tokenize(tagged_sent_no_pn):
                 if Textatistic(w + ".").notdalechall_count != 0:
                     print(w)
                     returnTextTips = returnTextTips + "<br>" + w
+                    temp_dalechall_warning += "<br>" + w
+            all_tips[sentence].append(temp_dalechall_warning)
         print("\n")
         returnTextTips = returnTextTips + "<br>"
 
-        if Textatistic(tagged_sent_no_pn + ".").polysyblword_count > 0: #  CHANGE NUMBER LATER
+        if Textatistic(tagged_sent_no_pn + ".").polysyblword_count > max_long_words_per_sentence:
             print(f"{bcolors.FAIL}Too many long words {bcolors.ENDC}" + "(" + str(Textatistic(tagged_sent_no_pn + ".").polysyblword_count) + "):", sentence)
             returnTextTips = returnTextTips + "<br>Too many long words (" + str(Textatistic(tagged_sent_no_pn + ".").polysyblword_count) +")" + sentence
             print(f"{bcolors.BOLD}No proper nouns:{bcolors.ENDC}", tagged_sent_no_pn, "\n")
             returnTextTips = returnTextTips + "<br>No proper nouns: " + tagged_sent_no_pn + "<br>"
             print(f"{bcolors.OKGREEN}Consider changing: {bcolors.ENDC}")
             returnTextTips = returnTextTips + "<font color=green>Consider changing:</font>"
+            temp_long_warning = "This sentence has too many long words (words with more than 3 syllables). Try to have " + str(max_long_words_per_sentence) + " or less long words per sentence. These are the long words in this sentence:"
             for x in nltk.word_tokenize(tagged_sent_no_pn):
                 if Textatistic(x + ".").polysyblword_count != 0:
                     print(x)
                     returnTextTips = returnTextTips + "<br>" + x
+                    temp_long_warning += "<br>" + x
+            all_tips[sentence].append(temp_long_warning)
         print("\n")
         returnTextTips = returnTextTips + "<br>"
 
-    for (num, sent) in words_per_sentence:
-        if num > 23:
-            print(f"{bcolors.FAIL}Shorten sentence{bcolors.ENDC}" " (" + str(num) + " words):", sent, "\n")
-            returnTextTips = returnTextTips + "<br>Shorten sentence (" + str(num) + " words): " + sent + "<br>"
+        word_count = Textatistic(sentence).word_count
+        if word_count > max_sentence_length:
+            print(f"{bcolors.FAIL}Shorten sentence{bcolors.ENDC}" " (" + str(word_count) + " words):", sentence, "\n")
+            returnTextTips = returnTextTips + "<br>Shorten sentence (" + str(word_count) + " words): " + sentence + "<br>"
+            all_tips[sentence].append("This sentence has " + str(word_count) + " words. Try to shorten it to " + str(max_sentence_length) + " or less words.")
             #print("Shorten sentence (" + str(num) + "):", sent, "\n")
-    
+    print(all_values)
+    print(all_tips)
     returnTextTipsWithoutLines = returnTextTips.replace('<br>','')
     if (returnTextTipsWithoutLines == ""):
 	    returnTextTips = " There are no recommendations. You are all good."
     returnText = returnText + returnTextTips
     print("Starting")
     print(returnTextTips)
+
     return returnText
+
 
 # EXAMPLE Text
 example1 = "There was a cat. The cat had a hat. The cat was sad. The cat bought a magic car."
@@ -240,4 +293,8 @@ example2 = "Bo, the Portuguese water dog who became the first presidential pet i
 #getScores(example1)
 #getScores(example2)
 
-app.run()
+bad_sentence = "This is one confusing, convoluted, ambiguous sentence that has way way way way way way way way way way way way way way way way way way way too many words and cats and dogs and pizza"
+getScores(bad_sentence)
+#getScores("hi my name is Avani. water water water water. he he he he he he he he he he he he he he he he he he he he he he he he he")
+
+#app.run()
