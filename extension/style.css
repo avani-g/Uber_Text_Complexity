@@ -1,0 +1,125 @@
+
+#score_container {
+    display: flex;
+    width: 750px;
+}
+
+.score_box {
+    width: 25%;
+    background-color: #263859;
+    justify-content: space-around;
+    margin: 10px;
+    text-align: center;
+    border-radius: 7px;
+    border: solid 1px;
+    border-color: #111213;
+}
+
+h1 {
+    font-size: 15px;
+    color: #111213;
+}
+
+h2 {
+    color: #ff6768;
+}
+
+body{
+    min-width:500px;
+    height:250px;
+    font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+    padding:10px;
+    background-color: #17223b;
+}
+
+.overall_stats {
+    height: auto;
+    width: 710px;
+    display: flex;
+    margin-top: 10px;
+    flex-direction: row;
+    margin-bottom: 30px;
+}
+
+h3 {
+    justify-content: space-around;
+    text-align: right;
+    width: 150px;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: #838383;
+}
+
+.score_link {
+    font-size: 14px;
+    color: #EAEAEA;
+    font-weight: 700;
+    margin-top: 20px;
+}
+
+.title {
+    color: white;
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
+    font-family: monospace;
+    margin-bottom: 40px;
+    margin-top: 60px;
+}
+
+.stat_box {
+    width: 25%;
+    justify-content:center;
+    text-align: center;
+    display: flex;
+}
+
+.stat {
+    color: #ff6768;
+    width: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: none;
+    margin-left: 10px;
+}
+
+.exact_score {
+    margin: 0 auto;
+    color: #838383;
+    margin-bottom: 10px;
+}
+
+.tip_box {
+    background-color: #263859;
+    border-radius: 7px;
+    border: solid 1px;
+    border-color: #111213;
+    margin: 15px;
+}
+
+.sentence {
+    color: #ff6768;
+    font-weight: 700;
+    font-size: 17px;
+    margin: 20px;
+}
+
+.tip {
+    color: #EAEAEA;
+    font-size: 14px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-family: monospace;
+}
+
+button {
+    height: 50px;
+    width:120px;
+    background-color: #494949;
+    color: #EAEAEA;
+    border-radius: 5px;
+    border: none;
+    font-weight: 700;
+}
+
+

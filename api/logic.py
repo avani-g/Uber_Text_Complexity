@@ -290,12 +290,18 @@ def getScores(text):
 
     return_statement = "<h1 class='title'>Scores</h1><div id='score_container'>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/flesch-reading-ease-readability-formula.php'>Flesch Score:</a>        <h2>" + str(all_values['Flesch Score'][1]) + " Grade</h2>        <p class='exact_score'>" + str(all_values['Flesch Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/new-dale-chall-readability-formula.php'>Dale-Chall Score:</a>        <h2>" + str(all_values['Dale-Chall Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['Dale-Chall Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/smog-readability-formula.php'>SMOG Score:</a>        <h2>" + str(all_values['SMOG Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['SMOG Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/gunning-fog-readability-formula.php'>Gunning Fog Score:</a>        <h2>" + str(all_values['Gunning Fog Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['Gunning Fog Score'][0]) + "</p>    </div></div><h1 class='title'>Stats</h1><div class='overall_stats'>    <div class='stat_box'>        <h3>Sentence Count:</h3>        <h3 class='stat'>" + str(all_values['Sentence Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Word Count:</h3>        <h3 class='stat'>" + str(all_values['Word Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Character Count:</h3>        <h3 class='stat'>" + str(all_values['Character Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Syllable Count:</h3>        <h3 class='stat'>" + str(all_values['Syllable Count']) + "</h3>    </div></div><div class='overall_stats'>    <div class='stat_box'>        <h3>Difficult Words:</h3>        <h3 class='stat'>" + str(all_values['Difficult Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Difficult Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Difficult Words Percentage'], 2)) + "%</h3>    </div>    <div class='stat_box'>        <h3>Long Words:</h3>        <h3 class='stat'>" + str(all_values['Long Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Long Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Long Words Percentage'], 2)) + "%</h3>    </div></div><h1 class='title'>Tips</h1>"
 
-    for (s, t) in all_tips.items():
-        return_statement += "<div class='tip_box'>    <p class='sentence'>\"" + str(s) + "\"</p> "
-        for x in t:
-            return_statement += "<p class='tip'>" + x + "</p>"
-        return_statement += "</div>"
+    tip_count = 0
 
+    for (s, t) in all_tips.items():
+        if t != []:
+            tip_count += 1
+            return_statement += "<div class='tip_box'>    <p class='sentence'>\"" + str(s) + "\"</p> "
+            for x in t:
+                return_statement += "<p class='tip'>" + x + "</p>"
+            return_statement += "</div>"
+
+    if tip_count == 0:
+        return_statement += "<h3 style='width:100%; text-align:center;'>This text looks good. There are no tips.</h3>"
 
 
     #return_statement = "<h1>header</h1>"

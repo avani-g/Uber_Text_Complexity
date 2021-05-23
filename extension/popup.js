@@ -18,18 +18,18 @@ chrome.storage.sync.get('color', function(data) {
 });*/
 
 
-GetURL.onclick = function(element) {
-  getCurrentTabUrl();
-};
+//GetURL.onclick = function(element) {
+//  getCurrentTabUrl();
+//};
 
-document.getElementById('getText').onclick = function(element) {
-  chrome.tabs.executeScript( {
-  code: "window.getSelection().toString();"
-}, function(selection) {
-
-  document.getElementById("selectedtext").innerHTML = selection[0];
-});
-};
+//document.getElementById('getText').onclick = function(element) {
+//  chrome.tabs.executeScript( {
+//  code: "window.getSelection().toString();"
+//}, function(selection) {
+//
+//  document.getElementById("selectedtext").innerHTML = selection[0];
+//});
+//};
 
 function modifyDOM() {
         //You can play with your DOM here or check URL against your regex
@@ -39,13 +39,14 @@ function modifyDOM() {
 		return true;
     }
 
-document.getElementById('analyzeText').onclick = function(element) {
+document.getElementById('analyzeTextButton').onclick = function(element) {
   chrome.tabs.executeScript( {
   code: "window.getSelection().toString();"
 }, function(selection) {
   	fetch('http://127.0.0.1:5000/getScores/'+selection[0]).then(r => r.text()).then(result => {
     // Result now contains the response text, do what you want...
 	console.log(result);
+    document.getElementById("analyzeTextButton").style.display = 'none';
 	document.getElementById("analyzedText").innerHTML = result;
 
 })
