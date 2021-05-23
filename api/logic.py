@@ -39,7 +39,7 @@ def getScores(text):
     #CUSTOMIZATIONS:
     max_sentence_length = 23
     max_long_words_per_sentence = 2
-    max_difficult_words_per_sentence = 0
+    max_difficult_words_per_sentence = 3
     max_nouns_per_sentence = 3
 
     all_values = {}
