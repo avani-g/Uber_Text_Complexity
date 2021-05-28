@@ -41,6 +41,7 @@ def getScores(text):
     max_long_words_per_sentence = 2
     max_difficult_words_per_sentence = 3
     max_nouns_per_sentence = 3
+    readability_score_threshold = 50
 
     all_values = {}
 
@@ -232,9 +233,11 @@ def getScores(text):
             print(f"{bcolors.FAIL}Too many nouns {bcolors.ENDC}" + "(" + str(len(nouns)) + "):", sentence, "\n")
             returnTextTips = returnTextTips + "<br>Too many nouns (" + str(len(nouns)) + "): " + sentence
             print(f"{bcolors.BOLD}nouns:{bcolors.ENDC}", nouns, "\n")
-            temp_noun_warning = "This sentence has " + str(len(nouns)) + " nouns. Try to have " + str(max_nouns_per_sentence) + " or less nouns per sentence. <br>These are the nouns in this sentence:"
+            temp_noun_warning = "<li class='tip'>This sentence has " + str(len(nouns)) + " nouns. Try to have " + str(max_nouns_per_sentence) + " or less nouns per sentence. These are the nouns in this sentence: "
             for noun in nouns:
-                temp_noun_warning += "<br>" + noun
+                temp_noun_warning += noun + ", "
+            temp_noun_warning = temp_noun_warning[:-2]
+            temp_noun_warning += ".</li>"
             all_tips[sentence].append(temp_noun_warning)
 
 
@@ -246,12 +249,14 @@ def getScores(text):
             returnTextTips = returnTextTips + "<br><font color=red>No proper nouns: </font>" + tagged_sent_no_pn
             print(f"{bcolors.OKGREEN}Consider changing: {bcolors.ENDC}")
             returnTextTips = returnTextTips + "<br><font color=green>Consider changing: </font>"
-            temp_dalechall_warning = "This sentence has " + str(Textatistic(tagged_sent_no_pn + ".").notdalechall_count) + " difficult words (words that aren't on the Dale-Chall list). Try to have " + str(max_difficult_words_per_sentence) + " or less difficult words per sentence. These are the difficult words in this sentence:"
+            temp_dalechall_warning = "<li class='tip'>This sentence has " + str(Textatistic(tagged_sent_no_pn + ".").notdalechall_count) + " difficult words (words that aren't on the Dale-Chall list). Try to have " + str(max_difficult_words_per_sentence) + " or less difficult words per sentence. These are the difficult words in this sentence: "
             for w in nltk.word_tokenize(tagged_sent_no_pn):
                 if Textatistic(w + ".").notdalechall_count != 0:
                     print(w)
                     returnTextTips = returnTextTips + "<br>" + w
-                    temp_dalechall_warning += "<br>" + w
+                    temp_dalechall_warning += w + ", "
+            temp_dalechall_warning = temp_dalechall_warning[:-2]
+            temp_dalechall_warning += ".</li>"
             all_tips[sentence].append(temp_dalechall_warning)
         print("\n")
         returnTextTips = returnTextTips + "<br>"
@@ -263,12 +268,14 @@ def getScores(text):
             returnTextTips = returnTextTips + "<br>No proper nouns: " + tagged_sent_no_pn + "<br>"
             print(f"{bcolors.OKGREEN}Consider changing: {bcolors.ENDC}")
             returnTextTips = returnTextTips + "<font color=green>Consider changing:</font>"
-            temp_long_warning = "This sentence has too many long words (words with more than 3 syllables). Try to have " + str(max_long_words_per_sentence) + " or less long words per sentence. These are the long words in this sentence:"
+            temp_long_warning = "<li class='tip'>This sentence has too many long words (words with more than 3 syllables). Try to have " + str(max_long_words_per_sentence) + " or less long words per sentence. These are the long words in this sentence: "
             for x in nltk.word_tokenize(tagged_sent_no_pn):
                 if Textatistic(x + ".").polysyblword_count != 0:
                     print(x)
                     returnTextTips = returnTextTips + "<br>" + x
-                    temp_long_warning += "<br>" + x
+                    temp_long_warning += x + ", "
+            temp_long_warning = temp_long_warning[:-2]
+            temp_long_warning += ".</li>"
             all_tips[sentence].append(temp_long_warning)
         print("\n")
         returnTextTips = returnTextTips + "<br>"
@@ -277,7 +284,7 @@ def getScores(text):
         if word_count > max_sentence_length:
             print(f"{bcolors.FAIL}Shorten sentence{bcolors.ENDC}" " (" + str(word_count) + " words):", sentence, "\n")
             returnTextTips = returnTextTips + "<br>Shorten sentence (" + str(word_count) + " words): " + sentence + "<br>"
-            all_tips[sentence].append("This sentence has " + str(word_count) + " words. Try to shorten it to " + str(max_sentence_length) + " or less words.")
+            all_tips[sentence].append("<li class='tip'>This sentence has " + str(word_count) + " words. Try to shorten it to " + str(max_sentence_length) + " or less words.</li>")
             #print("Shorten sentence (" + str(num) + "):", sent, "\n")
     print(all_values)
     print(all_tips)
@@ -288,20 +295,28 @@ def getScores(text):
     print("Starting")
     print(returnTextTips)
 
-    return_statement = "<h1 class='title'>Scores</h1><div id='score_container'>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/flesch-reading-ease-readability-formula.php'>Flesch Score:</a>        <h2>" + str(all_values['Flesch Score'][1]) + " Grade</h2>        <p class='exact_score'>" + str(all_values['Flesch Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/new-dale-chall-readability-formula.php'>Dale-Chall Score:</a>        <h2>" + str(all_values['Dale-Chall Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['Dale-Chall Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/smog-readability-formula.php'>SMOG Score:</a>        <h2>" + str(all_values['SMOG Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['SMOG Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/gunning-fog-readability-formula.php'>Gunning Fog Score:</a>        <h2>" + str(all_values['Gunning Fog Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['Gunning Fog Score'][0]) + "</p>    </div></div><h1 class='title'>Stats</h1><div class='overall_stats'>    <div class='stat_box'>        <h3>Sentence Count:</h3>        <h3 class='stat'>" + str(all_values['Sentence Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Word Count:</h3>        <h3 class='stat'>" + str(all_values['Word Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Character Count:</h3>        <h3 class='stat'>" + str(all_values['Character Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Syllable Count:</h3>        <h3 class='stat'>" + str(all_values['Syllable Count']) + "</h3>    </div></div><div class='overall_stats'>    <div class='stat_box'>        <h3>Difficult Words:</h3>        <h3 class='stat'>" + str(all_values['Difficult Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Difficult Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Difficult Words Percentage'], 2)) + "%</h3>    </div>    <div class='stat_box'>        <h3>Long Words:</h3>        <h3 class='stat'>" + str(all_values['Long Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Long Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Long Words Percentage'], 2)) + "%</h3>    </div></div><h1 class='title'>Tips</h1>"
+    return_statement = "<h1 class='title'>Overall Scores</h1><div id='score_container'>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/flesch-reading-ease-readability-formula.php'>Flesch Score:</a>        <h2>" + str(all_values['Flesch Score'][1]) + " Grade</h2>        <p class='exact_score'>" + str(all_values['Flesch Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/new-dale-chall-readability-formula.php'>Dale-Chall Score:</a>        <h2>" + str(all_values['Dale-Chall Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['Dale-Chall Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/smog-readability-formula.php'>SMOG Score:</a>        <h2>" + str(all_values['SMOG Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['SMOG Score'][0]) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/gunning-fog-readability-formula.php'>Gunning Fog Score:</a>        <h2>" + str(all_values['Gunning Fog Score'][1]) + "</h2>        <p class='exact_score'>" + str(all_values['Gunning Fog Score'][0]) + "</p>    </div></div><h1 class='title'>Overall Stats</h1><div class='overall_stats'>    <div class='stat_box'>        <h3>Sentence Count:</h3>        <h3 class='stat'>" + str(all_values['Sentence Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Word Count:</h3>        <h3 class='stat'>" + str(all_values['Word Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Character Count:</h3>        <h3 class='stat'>" + str(all_values['Character Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Syllable Count:</h3>        <h3 class='stat'>" + str(all_values['Syllable Count']) + "</h3>    </div></div><div class='overall_stats'>    <div class='stat_box'>        <h3>Difficult Words:</h3>        <h3 class='stat'>" + str(all_values['Difficult Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Difficult Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Difficult Words Percentage'], 2)) + "%</h3>    </div>    <div class='stat_box'>        <h3>Long Words:</h3>        <h3 class='stat'>" + str(all_values['Long Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Long Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Long Words Percentage'], 2)) + "%</h3>    </div></div><h1 class='title'>Tips</h1>"
 
-    tip_count = 0
+    # tip_count = 0
 
     for (s, t) in all_tips.items():
+        sentence_readability_score = round(Textatistic(s).flesch_score, 0)
+        if sentence_readability_score >= 50:
+            score_color = "green"
+        else:
+            score_color = "red"
+        return_statement += "<div class='tip_box'>  <p class='score' style='color:" + score_color +";'>Readability Score: " + str(sentence_readability_score)[:-2] +"</p>  <p class='sentence'>\"" + str(s) + "\"</p> "
         if t != []:
-            tip_count += 1
-            return_statement += "<div class='tip_box'>    <p class='sentence'>\"" + str(s) + "\"</p> "
+            return_statement += "<p class='tip'>Tips:</p>"
+            # tip_count += 1
             for x in t:
                 return_statement += "<p class='tip'>" + x + "</p>"
-            return_statement += "</div>"
+        else:
+            return_statement += "<p class='tip'>There are no suggestions. </p>"
+        return_statement += "</div>"
 
-    if tip_count == 0:
-        return_statement += "<h3 style='width:100%; text-align:center;'>This text looks good. There are no tips.</h3>"
+    # if tip_count == 0:
+    #     return_statement += "<h3 style='width:100%; text-align:center;'>This text looks good. There are no tips.</h3>"
 
 
     #return_statement = "<h1>header</h1>"
