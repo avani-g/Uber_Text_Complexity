@@ -1,12 +1,4 @@
-# Things to include:
-# Flesch reading score (uses sentence length and avaerage syllables/word)
-# Sentence length and average sentence length
-# nouns/sentence
-# slang?
-
 # @author: Avani Goyal
-
-# fix quotation marks and contractions
 
 import flask
 from flask import request
@@ -50,13 +42,13 @@ def getScores(text):
     print("TEXT:", text)
 
     punctuation_list = [",", ".", "-", "'", "\"", ":", ";", "—", "!", "?"]
-    returnText = ""
-    returnText = returnText + "<b>"+"Text under analysis:"+"</b>" + "<br>" + text
+    #returnText = ""
+    #returnText = returnText + "<b>"+"Text under analysis:"+"</b>" + "<br>" + text
     print(f"{bcolors.HEADER}Text:{bcolors.ENDC}", text)
     if text[-1] not in punctuation_list:
         text += "."
     readability_scores = Textatistic(text).scores
-    returnText = returnText + "<br><br><b>Scores: </b>" + str(readability_scores)
+    #returnText = returnText + "<br><br><b>Scores: </b>" + str(readability_scores)
     print("\nScores:", readability_scores)
 
     # Basic Info -------------------------------------------------------
@@ -72,7 +64,7 @@ def getScores(text):
     all_values["Syllable Count"] = Textatistic(text).sybl_count
 
 
-    returnText = returnText + "<br><b>Basic Info: </b><br><b><Sentence Count:</b>" + str(Textatistic(text).sent_count) + "<br><b>Word Count:</b>" + str(Textatistic(text).word_count)+"<br><b>Character Count: </b>"+str(Textatistic(text).char_count)+"<br><b>Syllable Count: </b>"+str(Textatistic(text).sybl_count)
+    #returnText = returnText + "<br><b>Basic Info: </b><br><b><Sentence Count:</b>" + str(Textatistic(text).sent_count) + "<br><b>Word Count:</b>" + str(Textatistic(text).word_count)+"<br><b>Character Count: </b>"+str(Textatistic(text).char_count)+"<br><b>Syllable Count: </b>"+str(Textatistic(text).sybl_count)
 
 
     # Complicated Info -------------------------------------------------
@@ -84,7 +76,7 @@ def getScores(text):
         # find which ones aren't on the list and tell the writer
     print("Poly Syllable World Count:", Textatistic(text).polysyblword_count) # polysyblword_count	number of words with three or more syllables.
 
-    returnText = returnText + "<br><br><b>Complicated Info: </b><br><b>Not Dale-Chall Count:</b>" + str(Textatistic(text).notdalechall_count)+"<br><b>Poly Syllable World Count: </b>"+str(Textatistic(text).polysyblword_count)
+    #returnText = returnText + "<br><br><b>Complicated Info: </b><br><b>Not Dale-Chall Count:</b>" + str(Textatistic(text).notdalechall_count)+"<br><b>Poly Syllable World Count: </b>"+str(Textatistic(text).polysyblword_count)
 
     no_pn_text = ""
     for (wrd, tg) in nltk.pos_tag(nltk.word_tokenize(text)):
@@ -100,7 +92,7 @@ def getScores(text):
 
     # Scores ------------------------------------------------------------
     print("\n", "Scores:", "\n")
-    returnText = returnText + "<br><br><b>Scores:</b>"
+    #returnText = returnText + "<br><br><b>Scores:</b>"
 
     if Textatistic(text).dalechall_score < 5:
         dc_grade = "Grade 4 and Below"
@@ -123,33 +115,9 @@ def getScores(text):
         # PDW = Percentage of difficult words not on the Dale–Chall word list.
         # ASL = Average sentence length
         # if PDW > 5% -> Adjusted Score = Raw Score + 3.6365, otherwise Adjusted Score = Raw Score (for 4th grade and above)
-    returnText = returnText + "<br><b>Dale-Chall Score: </b>"+str(Textatistic(text).dalechall_score) + " ( " + dc_grade + " )"
+    #returnText = returnText + "<br><b>Dale-Chall Score: </b>"+str(Textatistic(text).dalechall_score) + " ( " + dc_grade + " )"
 
     all_values["Dale-Chall Score"] = [Textatistic(text).dalechall_score, dc_grade]
-
-    # NOT USING THIS METHOD BECUASE ITS SIILAR TO THE FLESCH ONE AND DOESN'T HAVE A GOOD SCORING SYSTEM
-
-    # if Textatistic(example1).fleschkincaid_score < 10:
-    #     fk_grade = "Professional"
-    # elif Textatistic(example1).fleschkincaid_score < 30:
-    #     fk_grade = "College Graduate"
-    # elif Textatistic(example1).fleschkincaid_score < 50:
-    #     fk_grade = "College"
-    # elif Textatistic(example1).fleschkincaid_score < 60:
-    #     fk_grade = "10th - 12th"
-    # elif Textatistic(example1).fleschkincaid_score < 70:
-    #     fk_grade = "8th - 9th"
-    # elif Textatistic(example1).fleschkincaid_score < 80:
-    #     fk_grade = "7th"
-    # elif Textatistic(example1).fleschkincaid_score < 90:
-    #     fk_grade = "6th"
-    # elif Textatistic(example1).fleschkincaid_score <= 100:
-    #     fk_grade = "5th"
-    # else:
-    #     fk_grade = "Over 100?? Super Readable I guess"
-    # print("Flesch-Kincaid Score:", Textatistic(example1).fleschkincaid_score, "(", fk_grade, ")")
-    #     # *uses words per sentence and syllables per word*
-    #     # 206.835 = 1.015(total words / total sentences) - 84.6 (total syllables / total words)
 
 
     print("SMOG Score:", Textatistic(text).smog_score, "(", "Grade", int(Textatistic(text).smog_score), ")")
@@ -157,7 +125,7 @@ def getScores(text):
         # SMOG grading = 3 + √(polysyllable count).
         # Here, polysyllable count = number of words of more than two syllables in a
         # sample of 30 sentences.
-    returnText = returnText + "<br><b>SMOG Score:</b> " + str(Textatistic(text).smog_score) + " ( Grade " +  str(int(Textatistic(text).smog_score)) + " ) "
+    #returnText = returnText + "<br><b>SMOG Score:</b> " + str(Textatistic(text).smog_score) + " ( Grade " +  str(int(Textatistic(text).smog_score)) + " ) "
 
     all_values["SMOG Score"] = [Textatistic(text).smog_score, "Grade " + str(int(Textatistic(text).smog_score))]
 
@@ -183,7 +151,7 @@ def getScores(text):
         # Here,
         # ASL = average sentence length (number of words divided by number of sentences)
         # ASW = average word length in syllables (number of syllables divided by number of words)
-    returnText = returnText + "<br><b>Flesch Score:</b> " + str(Textatistic(text).flesch_score) + " ( " + fs_grade + " ) "
+    #returnText = returnText + "<br><b>Flesch Score:</b> " + str(Textatistic(text).flesch_score) + " ( " + fs_grade + " ) "
 
     all_values["Flesch Score"] = [Textatistic(text).flesch_score, fs_grade]
 
@@ -191,12 +159,12 @@ def getScores(text):
         # *uses average sentence length and percentage of words with more than 2 syllables*
         # Grade level= 0.4 * ( (average sentence length) + (percentage of Hard Words) )
         # Here, Hard Words = words with more than two syllables.
-    returnText = returnText + "<br><b>Gunning fog Score:</b> " + str(Textatistic(text).gunningfog_score) + " ( Grade " + str(int(Textatistic(text).gunningfog_score)) + " ) "
+    #returnText = returnText + "<br><b>Gunning fog Score:</b> " + str(Textatistic(text).gunningfog_score) + " ( Grade " + str(int(Textatistic(text).gunningfog_score)) + " ) "
 
     all_values["Gunning Fog Score"] = [Textatistic(text).gunningfog_score, "Grade " + str(int(Textatistic(text).gunningfog_score))]
 
     print("\n\n")
-    returnText = returnText + "<br><br>"
+    #returnText = returnText + "<br><br>"
 
     sentences = sent_tokenize(text)
 
@@ -204,7 +172,7 @@ def getScores(text):
 
 
     print(f"{bcolors.OKBLUE}Tips:{bcolors.ENDC}")
-    returnText = returnText + "<b>Tips:</b>"
+    #returnText = returnText + "<b>Tips:</b>"
 
     all_tips = {}
 
@@ -290,18 +258,15 @@ def getScores(text):
     print(all_tips)
     returnTextTipsWithoutLines = returnTextTips.replace('<br>','')
     if (returnTextTipsWithoutLines == ""):
-	    returnTextTips = " There are no recommendations. You are all good."
-    returnText = returnText + returnTextTips
-    print("Starting")
+        returnTextTips = " There are no recommendations. You are all good."
+    #returnText = returnText + returnTextTips
     print(returnTextTips)
 
     return_statement = "<h1 class='title'>Overall Scores</h1><div id='score_container'>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/flesch-reading-ease-readability-formula.php'>Flesch Score:</a>        <h2>" + str(all_values['Flesch Score'][1]) + " Grade</h2>        <p class='exact_score'>" + str(round(all_values['Flesch Score'][0], 2)) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/new-dale-chall-readability-formula.php'>Dale-Chall Score:</a>        <h2>" + str(all_values['Dale-Chall Score'][1]) + "</h2>        <p class='exact_score'>" + str(round(all_values['Dale-Chall Score'][0], 2)) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/smog-readability-formula.php'>SMOG Score:</a>        <h2>" + str(all_values['SMOG Score'][1]) + "</h2>        <p class='exact_score'>" + str(round(all_values['SMOG Score'][0], 2)) + "</p>    </div>    <div class='score_box'>        <p></p>        <a class='score_link' href='https://readabilityformulas.com/gunning-fog-readability-formula.php'>Gunning Fog Score:</a>        <h2>" + str(all_values['Gunning Fog Score'][1]) + "</h2>        <p class='exact_score'>" + str(round(all_values['Gunning Fog Score'][0], 2)) + "</p>    </div></div><h1 class='title'>Overall Stats</h1><div class='overall_stats'>    <div class='stat_box'>        <h3>Sentence Count:</h3>        <h3 class='stat'>" + str(all_values['Sentence Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Word Count:</h3>        <h3 class='stat'>" + str(all_values['Word Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Character Count:</h3>        <h3 class='stat'>" + str(all_values['Character Count']) + "</h3>    </div>    <div class='stat_box'>        <h3>Syllable Count:</h3>        <h3 class='stat'>" + str(all_values['Syllable Count']) + "</h3>    </div></div><div class='overall_stats'>    <div class='stat_box'>        <h3>Difficult Words:</h3>        <h3 class='stat'>" + str(all_values['Difficult Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Difficult Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Difficult Words Percentage'], 2)) + "%</h3>    </div>    <div class='stat_box'>        <h3>Long Words:</h3>        <h3 class='stat'>" + str(all_values['Long Words']) + "</h3>    </div>    <div class='stat_box'>        <h3>Long Word Percentage:</h3>        <h3 class='stat'>" + str(round(all_values['Long Words Percentage'], 2)) + "%</h3>    </div></div><h1 class='title'>Tips</h1>"
 
-    # tip_count = 0
-
     for (s, t) in all_tips.items():
         sentence_readability_score = round(Textatistic(s).flesch_score, 0)
-        if sentence_readability_score >= 50:
+        if sentence_readability_score >= readability_score_threshold:
             score_color = "green"
         else:
             score_color = "red"
@@ -315,28 +280,13 @@ def getScores(text):
             return_statement += "<p class='tip'>There are no suggestions. </p>"
         return_statement += "</div>"
 
-    # if tip_count == 0:
-    #     return_statement += "<h3 style='width:100%; text-align:center;'>This text looks good. There are no tips.</h3>"
-
-
-    #return_statement = "<h1>header</h1>"
-    #return returnText
     return return_statement
 
 
 # EXAMPLE Text
-example1 = "There was a cat. The cat had a hat. The cat was sad. The cat bought a magic car."
 
-example2 = "Bo, the Portuguese water dog who became the first presidential pet in the Obama White House, romping in the halls of power, died on Saturday. Bo, who was 12, had cancer, Michelle Obama said on Instagram. President Barack Obama said the family had lost a true friend and loyal companion. For more than a decade, Bo was a constant, gentle presence in our lives — happy to see us on our good days, our bad days, and everyday in between, Mr. Obama wrote on Twitter. He tolerated all the fuss that came with being in the White House, had a big bark but no bite, loved to jump in the pool in the summer, was unflappable with children, lived for scraps around the dinner table, and had great hair. "
+#example1 = "Bo, the Portuguese water dog who became the first presidential pet in the Obama White House, romping in the halls of power, died on Saturday. Bo, who was 12, had cancer, Michelle Obama said on Instagram. President Barack Obama said the family had lost a true friend and loyal companion. For more than a decade, Bo was a constant, gentle presence in our lives — happy to see us on our good days, our bad days, and everyday in between, Mr. Obama wrote on Twitter. He tolerated all the fuss that came with being in the White House, had a big bark but no bite, loved to jump in the pool in the summer, was unflappable with children, lived for scraps around the dinner table, and had great hair. "
 
 #getScores(example1)
-#getScores(example2)
-
-
-
-bad_sentence = "This is one confusing, convoluted, ambiguous sentence that has way way way way way way way way way way way way way way way way way way way too many words and cats and dogs and pizza"
-#getScores(bad_sentence)
-#getScores("hi my name is Avani. water water water water. he he he he he he he he he he he he he he he he he he he he he he he he he")
-
 
 app.run()
